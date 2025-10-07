@@ -140,6 +140,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const signOut = async () => {
+    setLoading(true); // Show loading state during signout
     const { error } = await supabase.auth.signOut();
     if (!error) {
       setUser(null);
@@ -148,9 +149,8 @@ export const AuthProvider = ({ children }) => {
       setPendingUserData(null);
       localStorage.removeItem('authToken');
       localStorage.removeItem('user');
-      // Reload the page to go back to login
-      window.location.reload();
     }
+    setLoading(false); // This will trigger re-render to show Login component
   };
 
   // Alias for logout - same functionality
