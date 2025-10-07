@@ -148,8 +148,8 @@ export const AuthProvider = ({ children }) => {
       setPendingUserData(null);
       localStorage.removeItem('authToken');
       localStorage.removeItem('user');
-      // Redirect to login page
-      window.location.href = '/login';
+      // Reload the page to go back to login
+      window.location.reload();
     }
   };
 
