@@ -6,6 +6,8 @@ import { AuthProvider, useAuth } from "./contexts/AuthContext";
 
 function AppContent() {
   const { user, loading, needsRegistration } = useAuth();
+  
+  console.log('App state:', { user, loading, needsRegistration });
 
   if (loading) {
     return (

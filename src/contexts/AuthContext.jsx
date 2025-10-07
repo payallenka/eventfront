@@ -140,17 +140,21 @@ export const AuthProvider = ({ children }) => {
   };
 
   const signOut = async () => {
-    setLoading(true); // Show loading state during signout
+    console.log('Starting signOut...');
+    setLoading(true);
     const { error } = await supabase.auth.signOut();
-    if (!error) {
-      setUser(null);
-      setSession(null);
-      setNeedsRegistration(false);
-      setPendingUserData(null);
-      localStorage.removeItem('authToken');
-      localStorage.removeItem('user');
-    }
-    setLoading(false); // This will trigger re-render to show Login component
+    console.log('Supabase signOut result:', { error });
+    
+    // Clear all state
+    setUser(null);
+    setSession(null);
+    setNeedsRegistration(false);
+    setPendingUserData(null);
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('user');
+    
+    setLoading(false);
+    console.log('SignOut complete, should show login now');
   };
 
   // Alias for logout - same functionality
