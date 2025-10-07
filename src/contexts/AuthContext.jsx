@@ -62,6 +62,7 @@ export const AuthProvider = ({ children }) => {
 
       if (response.ok) {
         const data = await response.json();
+        console.log('Backend response:', data);
         if (data.user) {
           // User exists, set user and continue to dashboard
           setUser(data.user);
@@ -71,13 +72,16 @@ export const AuthProvider = ({ children }) => {
           console.log('Backend login successful');
         } else {
           // User doesn't exist, need registration
-          setNeedsRegistration(true);
-          setPendingUserData({
+          console.log('User needs registration, setting pendingUserData');
+          const pendingData = {
             email: supabaseUser.email,
             name: supabaseUser.user_metadata?.full_name || supabaseUser.email,
             picture: supabaseUser.user_metadata?.avatar_url || '',
             token: token
-          });
+          };
+          console.log('Setting pendingUserData:', pendingData);
+          setNeedsRegistration(true);
+          setPendingUserData(pendingData);
           console.log('User needs registration');
         }
       } else {
@@ -112,19 +116,35 @@ export const AuthProvider = ({ children }) => {
 
   const registerUser = async (userData) => {
     try {
+      console.log('Starting registration process...');
+      console.log('pendingUserData:', pendingUserData);
+      console.log('userData:', userData);
+      
+      if (!pendingUserData) {
+        console.error('No pending user data available');
+        return { success: false, error: 'Registration data missing. Please try signing in again.' };
+      }
+
+      const registrationData = {
+        ...pendingUserData,
+        ...userData
+      };
+      
+      console.log('Final registration data:', registrationData);
+
       const response = await fetch('https://eventbackend-kb4u.onrender.com/api/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          ...pendingUserData,
-          ...userData
-        }),
+        body: JSON.stringify(registrationData),
       });
+
+      console.log('Registration response status:', response.status);
 
       if (response.ok) {
         const data = await response.json();
+        console.log('Registration successful:', data);
         setUser(data.user);
         setNeedsRegistration(false);
         setPendingUserData(null);
@@ -132,11 +152,12 @@ export const AuthProvider = ({ children }) => {
         return { success: true };
       } else {
         const errorData = await response.json();
+        console.error('Registration failed with error:', errorData);
         return { success: false, error: errorData.error || 'Registration failed' };
       }
     } catch (error) {
       console.error('Registration failed:', error);
-      return { success: false, error: 'Registration failed' };
+      return { success: false, error: 'Registration failed: ' + error.message };
     }
   };
 
