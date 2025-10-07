@@ -20,10 +20,10 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       setSession(session);
       if (session) {
-        loginToBackend(session.access_token, session.user);
+        await loginToBackend(session.access_token, session.user);
       }
       setLoading(false);
     });
@@ -46,6 +46,7 @@ export const AuthProvider = ({ children }) => {
 
   const loginToBackend = async (token, supabaseUser) => {
     try {
+      console.log('Attempting to login to backend...');
       const response = await fetch('https://eventbackend-kb4u.onrender.com/api/auth/login', {
         method: 'POST',
         headers: {
@@ -67,6 +68,7 @@ export const AuthProvider = ({ children }) => {
           setNeedsRegistration(false);
           setPendingUserData(null);
           localStorage.setItem('authToken', token);
+          console.log('Backend login successful');
         } else {
           // User doesn't exist, need registration
           setNeedsRegistration(true);
@@ -76,26 +78,25 @@ export const AuthProvider = ({ children }) => {
             picture: supabaseUser.user_metadata?.avatar_url || '',
             token: token
           });
+          console.log('User needs registration');
         }
       } else {
         console.error('Backend login failed:', response.status);
-        setNeedsRegistration(true);
-        setPendingUserData({
-          email: supabaseUser.email,
-          name: supabaseUser.user_metadata?.full_name || supabaseUser.email,
-          picture: supabaseUser.user_metadata?.avatar_url || '',
-          token: token
-        });
+        // If backend is down/CORS issue, sign out from Supabase and show login
+        await supabase.auth.signOut();
+        setUser(null);
+        setSession(null);
+        setNeedsRegistration(false);
+        setPendingUserData(null);
       }
     } catch (error) {
       console.error('Backend login failed:', error);
-      setNeedsRegistration(true);
-      setPendingUserData({
-        email: supabaseUser.email,
-        name: supabaseUser.user_metadata?.full_name || supabaseUser.email,
-        picture: supabaseUser.user_metadata?.avatar_url || '',
-        token: token
-      });
+      // If backend is down/CORS issue, sign out from Supabase and show login
+      await supabase.auth.signOut();
+      setUser(null);
+      setSession(null);
+      setNeedsRegistration(false);
+      setPendingUserData(null);
     }
   };
 
