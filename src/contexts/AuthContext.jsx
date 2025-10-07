@@ -86,21 +86,44 @@ export const AuthProvider = ({ children }) => {
         }
       } else {
         console.error('Backend login failed:', response.status);
-        // If backend is down/CORS issue, sign out from Supabase and show login
-        await supabase.auth.signOut();
-        setUser(null);
-        setSession(null);
-        setNeedsRegistration(false);
-        setPendingUserData(null);
+        
+        // For 500 errors, treat as if user doesn't exist (trigger registration)
+        // This handles the case where backend has issues but we still want to allow registration
+        if (response.status === 500) {
+          console.log('Backend error 500 - treating as new user needing registration');
+          const pendingData = {
+            email: supabaseUser.email,
+            name: supabaseUser.user_metadata?.full_name || supabaseUser.email,
+            picture: supabaseUser.user_metadata?.avatar_url || '',
+            token: token
+          };
+          console.log('Setting pendingUserData for 500 error:', pendingData);
+          setNeedsRegistration(true);
+          setPendingUserData(pendingData);
+        } else {
+          // For other errors (404, 401, etc.), sign out and show login
+          await supabase.auth.signOut();
+          setUser(null);
+          setSession(null);
+          setNeedsRegistration(false);
+          setPendingUserData(null);
+        }
       }
     } catch (error) {
       console.error('Backend login failed:', error);
-      // If backend is down/CORS issue, sign out from Supabase and show login
-      await supabase.auth.signOut();
-      setUser(null);
-      setSession(null);
-      setNeedsRegistration(false);
-      setPendingUserData(null);
+      
+      // For network errors, treat as if user doesn't exist (allow registration attempt)
+      // This is more user-friendly than immediately signing out
+      console.log('Network error - treating as new user needing registration');
+      const pendingData = {
+        email: supabaseUser.email,
+        name: supabaseUser.user_metadata?.full_name || supabaseUser.email,
+        picture: supabaseUser.user_metadata?.avatar_url || '',
+        token: token
+      };
+      console.log('Setting pendingUserData for network error:', pendingData);
+      setNeedsRegistration(true);
+      setPendingUserData(pendingData);
     }
   };
 
