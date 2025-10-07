@@ -19,20 +19,6 @@ export const AuthProvider = ({ children }) => {
   const [pendingUserData, setPendingUserData] = useState(null);
 
   useEffect(() => {
-    // Temporarily clear any existing session to show login page
-    const clearSessionAndShowLogin = async () => {
-      await supabase.auth.signOut();
-      setUser(null);
-      setSession(null);
-      setNeedsRegistration(false);
-      setPendingUserData(null);
-      setLoading(false);
-    };
-    
-    clearSessionAndShowLogin();
-    
-    // Uncomment this block once backend CORS is working
-    /*
     // Get initial session
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       setSession(session);
@@ -56,7 +42,6 @@ export const AuthProvider = ({ children }) => {
     });
 
     return () => subscription.unsubscribe();
-    */
   }, []);
 
   const loginToBackend = async (token, supabaseUser) => {
