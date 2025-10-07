@@ -1,0 +1,43 @@
+/* Clean App styles - let Tailwind handle everything */
+#root {
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  background-color: #111827; /* gray-900 */
+}
+
+/* Real-time update animations */
+@keyframes updatePulse {
+  0% {
+    background-color: rgba(59, 130, 246, 0.3);
+    border-color: #3b82f6;
+    transform: scale(1);
+  }
+  50% {
+    background-color: rgba(59, 130, 246, 0.5);
+    border-color: #2563eb;
+    transform: scale(1.02);
+  }
+  100% {
+    background-color: rgba(59, 130, 246, 0.2);
+    border-color: #3b82f6;
+    transform: scale(1);
+  }
+}
+
+.update-animation {
+  animation: updatePulse 0.6s ease-in-out;
+}
+
+.task-update-animation {
+  animation: updatePulse 0.6s ease-in-out;
+}
+
+.event-update-animation {
+  animation: updatePulse 0.6s ease-in-out;
+}
+
+.attendee-update-animation {
+  animation: updatePulse 0.6s ease-in-out;
+}
