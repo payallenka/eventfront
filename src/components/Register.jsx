@@ -39,20 +39,20 @@ export default function Register() {
       justifyContent: 'center',
       backgroundColor: '#111827',
       margin: 0,
-      padding: '1rem',
+      padding: 'clamp(0.5rem, 2vw, 1rem)',
       fontFamily: 'system-ui, sans-serif'
     }}>
       <div style={{
         backgroundColor: '#1f2937',
         borderRadius: '0.5rem',
-        padding: '2rem',
+        padding: 'clamp(1.5rem, 4vw, 2rem)',
         width: '100%',
-        maxWidth: '28rem',
+        maxWidth: 'clamp(320px, 90vw, 28rem)',
         boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)'
       }}>
-        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+        <div style={{ textAlign: 'center', marginBottom: 'clamp(1rem, 3vw, 2rem)' }}>
           <h1 style={{
-            fontSize: '1.5rem',
+            fontSize: 'clamp(1.25rem, 4vw, 1.5rem)',
             fontWeight: 'bold',
             color: 'white',
             marginBottom: '0.5rem',
@@ -62,25 +62,28 @@ export default function Register() {
           </h1>
           <p style={{
             color: '#9ca3af',
-            margin: '0 0 1rem 0'
+            margin: '0 0 1rem 0',
+            fontSize: 'clamp(0.875rem, 2.5vw, 1rem)',
+            lineHeight: '1.5'
           }}>
             Welcome {pendingUserData?.name}! Please complete your registration.
           </p>
           <p style={{
             color: '#6b7280',
-            fontSize: '0.875rem',
-            margin: '0'
+            fontSize: 'clamp(0.75rem, 2vw, 0.875rem)',
+            margin: '0',
+            lineHeight: '1.4'
           }}>
             Email: {pendingUserData?.email}
           </p>
         </div>
 
         <form onSubmit={handleSubmit}>
-          <div style={{ marginBottom: '1rem' }}>
+          <div style={{ marginBottom: 'clamp(0.75rem, 2vw, 1rem)' }}>
             <label style={{
               display: 'block',
               color: '#d1d5db',
-              fontSize: '0.875rem',
+              fontSize: 'clamp(0.75rem, 2vw, 0.875rem)',
               fontWeight: '500',
               marginBottom: '0.5rem'
             }}>
@@ -94,23 +97,24 @@ export default function Register() {
               required
               style={{
                 width: '100%',
-                padding: '0.75rem',
+                padding: 'clamp(0.625rem, 2vw, 0.75rem)',
                 backgroundColor: '#374151',
                 border: '1px solid #4b5563',
                 borderRadius: '0.375rem',
                 color: 'white',
-                fontSize: '1rem',
-                boxSizing: 'border-box'
+                fontSize: 'clamp(0.875rem, 2.5vw, 1rem)',
+                boxSizing: 'border-box',
+                minHeight: '44px'
               }}
               placeholder="Enter your display name"
             />
           </div>
 
-          <div style={{ marginBottom: '1.5rem' }}>
+          <div style={{ marginBottom: 'clamp(1rem, 3vw, 1.5rem)' }}>
             <label style={{
               display: 'block',
               color: '#d1d5db',
-              fontSize: '0.875rem',
+              fontSize: 'clamp(0.75rem, 2vw, 0.875rem)',
               fontWeight: '500',
               marginBottom: '0.5rem'
             }}>
@@ -122,13 +126,14 @@ export default function Register() {
               onChange={handleChange}
               style={{
                 width: '100%',
-                padding: '0.75rem',
+                padding: 'clamp(0.625rem, 2vw, 0.75rem)',
                 backgroundColor: '#374151',
                 border: '1px solid #4b5563',
                 borderRadius: '0.375rem',
                 color: 'white',
-                fontSize: '1rem',
-                boxSizing: 'border-box'
+                fontSize: 'clamp(0.875rem, 2.5vw, 1rem)',
+                boxSizing: 'border-box',
+                minHeight: '44px'
               }}
             >
               <option value="USER">User (View events only)</option>
@@ -140,10 +145,11 @@ export default function Register() {
             <div style={{
               backgroundColor: '#dc2626',
               color: 'white',
-              padding: '0.75rem',
+              padding: 'clamp(0.625rem, 2vw, 0.75rem)',
               borderRadius: '0.375rem',
-              marginBottom: '1rem',
-              fontSize: '0.875rem'
+              marginBottom: 'clamp(0.75rem, 2vw, 1rem)',
+              fontSize: 'clamp(0.75rem, 2vw, 0.875rem)',
+              lineHeight: '1.4'
             }}>
               {error}
             </div>
@@ -157,12 +163,14 @@ export default function Register() {
               backgroundColor: loading ? '#6b7280' : '#3b82f6',
               color: 'white',
               fontWeight: '500',
-              padding: '0.75rem 1rem',
+              padding: 'clamp(0.625rem, 2vw, 0.75rem) clamp(0.75rem, 2vw, 1rem)',
               borderRadius: '0.5rem',
               border: 'none',
               cursor: loading ? 'not-allowed' : 'pointer',
-              fontSize: '1rem',
-              marginBottom: '1rem'
+              fontSize: 'clamp(0.875rem, 2.5vw, 1rem)',
+              marginBottom: 'clamp(0.75rem, 2vw, 1rem)',
+              minHeight: '48px',
+              transition: 'all 0.2s ease-in-out'
             }}
           >
             {loading ? 'Creating Account...' : 'Complete Registration'}
@@ -176,10 +184,12 @@ export default function Register() {
               backgroundColor: 'transparent',
               color: '#9ca3af',
               border: '1px solid #4b5563',
-              padding: '0.75rem 1rem',
+              padding: 'clamp(0.625rem, 2vw, 0.75rem) clamp(0.75rem, 2vw, 1rem)',
               borderRadius: '0.5rem',
               cursor: 'pointer',
-              fontSize: '0.875rem'
+              fontSize: 'clamp(0.75rem, 2vw, 0.875rem)',
+              minHeight: '44px',
+              transition: 'all 0.2s ease-in-out'
             }}
           >
             Cancel & Sign Out

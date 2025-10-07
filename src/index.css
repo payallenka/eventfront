@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Only minimal, non-conflicting resets */
+/* Enhanced responsive resets */
 * {
   box-sizing: border-box;
 }
@@ -17,6 +17,8 @@ html, body {
   background-color: #111827; /* gray-900 */
   color: white;
   min-height: 100vh;
+  /* Prevent horizontal scroll on mobile */
+  overflow-x: hidden;
 }
 
 #root {
@@ -25,4 +27,47 @@ html, body {
   background-color: #111827; /* gray-900 */
 }
 
-/* Allow Tailwind to handle button styles completely */
+/* Responsive text selection */
+::selection {
+  background-color: rgba(59, 130, 246, 0.3);
+  color: white;
+}
+
+/* Responsive focus styles */
+:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Touch-friendly button sizing for mobile */
+@media (max-width: 768px) {
+  button, 
+  input[type="button"], 
+  input[type="submit"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Improve tap targets */
+  a, button {
+    touch-action: manipulation;
+  }
+}
+
+/* Responsive scrollbar styling */
+::-webkit-scrollbar {
+  width: clamp(4px, 1vw, 8px);
+}
+
+::-webkit-scrollbar-track {
+  background: #1f2937;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #374151;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #4b5563;
+}

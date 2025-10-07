@@ -84,25 +84,25 @@ export default function AttendeeManager({ eventId }) {
   return (
     <div>
       <h4 style={{
-        fontSize: '20px',
+        fontSize: 'clamp(1.125rem, 3vw, 1.25rem)',
         fontWeight: '700',
         color: 'white',
-        marginBottom: '24px',
+        marginBottom: 'clamp(1rem, 3vw, 1.5rem)',
         display: 'flex',
         alignItems: 'center',
-        gap: '12px'
+        gap: 'clamp(8px, 2vw, 12px)'
       }}>
-        <FaUsers className="mr-2" />
+        <FaUsers style={{ fontSize: 'clamp(16px, 3vw, 20px)' }} />
         Attendee Management
       </h4>
       {error && (
         <div style={{
           backgroundColor: '#7f1d1d',
           color: 'white',
-          padding: '12px 16px',
-          borderRadius: '8px',
-          marginBottom: '20px',
-          fontSize: '14px',
+          padding: 'clamp(0.75rem, 2vw, 1rem)',
+          borderRadius: 'clamp(6px, 1.5vw, 8px)',
+          marginBottom: 'clamp(1rem, 3vw, 1.25rem)',
+          fontSize: 'clamp(0.875rem, 2.5vw, 1rem)',
           border: '1px solid #dc2626'
         }}>
           {error}
@@ -110,8 +110,12 @@ export default function AttendeeManager({ eventId }) {
       )}
       
       {isAdmin && (
-        <div style={{ marginBottom: '32px' }}>
-          <form onSubmit={handleSubmit} className="flex gap-3">
+        <div style={{ marginBottom: 'clamp(1.5rem, 4vw, 2rem)' }}>
+          <form onSubmit={handleSubmit} style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 'clamp(0.75rem, 2vw, 1rem)'
+          }}>
             <input
             name="name"
             value={form.name}
@@ -119,14 +123,15 @@ export default function AttendeeManager({ eventId }) {
             placeholder="Attendee Name"
             style={{
               flexGrow: 1,
-              padding: '12px',
+              padding: 'clamp(0.75rem, 2vw, 1rem)',
               backgroundColor: '#374151',
-              borderRadius: '12px',
+              borderRadius: 'clamp(8px, 2vw, 12px)',
               color: 'white',
               border: '1px solid #374151',
               outline: 'none',
-              fontSize: '16px',
-              transition: 'all 0.15s ease-in-out'
+              fontSize: 'clamp(0.875rem, 2.5vw, 1rem)',
+              transition: 'all 0.15s ease-in-out',
+              minHeight: '44px'
             }}
             onFocus={(e) => {
               e.target.style.borderColor = '#6366f1';
@@ -146,14 +151,15 @@ export default function AttendeeManager({ eventId }) {
             placeholder="Attendee Email"
             style={{
               flexGrow: 1,
-              padding: '12px',
+              padding: 'clamp(0.75rem, 2vw, 1rem)',
               backgroundColor: '#374151',
-              borderRadius: '12px',
+              borderRadius: 'clamp(8px, 2vw, 12px)',
               color: 'white',
               border: '1px solid #374151',
               outline: 'none',
-              fontSize: '16px',
-              transition: 'all 0.15s ease-in-out'
+              fontSize: 'clamp(0.875rem, 2.5vw, 1rem)',
+              transition: 'all 0.15s ease-in-out',
+              minHeight: '44px'
             }}
             onFocus={(e) => {
               e.target.style.borderColor = '#6366f1';
@@ -171,13 +177,14 @@ export default function AttendeeManager({ eventId }) {
               backgroundColor: '#6366f1',
               color: 'white',
               fontWeight: '600',
-              padding: '12px 16px',
-              borderRadius: '12px',
+              padding: 'clamp(0.75rem, 2vw, 1rem)',
+              borderRadius: 'clamp(6px, 1.5vw, 8px)',
               border: 'none',
               cursor: 'pointer',
-              fontSize: '16px',
+              fontSize: 'clamp(0.875rem, 2.5vw, 1rem)',
               boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
-              transition: 'all 0.2s ease-in-out'
+              transition: 'all 0.2s ease-in-out',
+              minHeight: '48px'
             }}
             onMouseEnter={(e) => {
               e.target.style.backgroundColor = '#4f46e5';

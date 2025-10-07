@@ -724,22 +724,33 @@ export default function EventsPage({ onEventSelect }) {
       }}>
       {/* Header with User Info and Add Event Button */}
       <div style={{
-        padding: '24px 32px',
+        padding: 'clamp(16px, 4vw, 24px) clamp(16px, 4vw, 32px)',
         borderBottom: '1px solid rgba(55, 65, 81, 0.3)',
         display: 'flex',
         justifyContent: 'space-between',
-        alignItems: 'center'
+        alignItems: 'center',
+        flexWrap: 'wrap',
+        gap: 'clamp(12px, 3vw, 16px)'
       }}>
         {/* Left Side - App Title and Event Manager */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+        <div style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          gap: 'clamp(12px, 3vw, 24px)',
+          minWidth: '0',
+          flex: '1 1 auto'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 'clamp(8px, 2vw, 16px)', minWidth: '0' }}>
             <h1 style={{
-              fontSize: '24px',
+              fontSize: 'clamp(1.25rem, 4vw, 1.5rem)',
               fontWeight: '600',
               color: 'white',
-              margin: 0
+              margin: 0,
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis'
             }}>
-              <FaCalendarAlt className="mr-2" />
+              <FaCalendarAlt style={{ marginRight: 'clamp(6px, 1.5vw, 8px)', verticalAlign: 'middle' }} />
               Events Calendar
             </h1>
             
@@ -747,15 +758,16 @@ export default function EventsPage({ onEventSelect }) {
             <div style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '8px',
-              padding: '4px 8px',
+              gap: 'clamp(4px, 1vw, 8px)',
+              padding: 'clamp(3px, 1vw, 4px) clamp(6px, 1.5vw, 8px)',
               borderRadius: '12px',
               backgroundColor: connectionStatus === 'connected' ? 'rgba(16, 185, 129, 0.2)' : 
                              connectionStatus === 'error' ? 'rgba(239, 68, 68, 0.2)' : 
                              'rgba(156, 163, 175, 0.2)',
               border: `1px solid ${connectionStatus === 'connected' ? '#10b981' : 
                                   connectionStatus === 'error' ? '#ef4444' : '#9ca3af'}`,
-              cursor: 'pointer'
+              cursor: 'pointer',
+              minWidth: 'fit-content'
             }}
             onClick={() => {
               
@@ -795,21 +807,27 @@ export default function EventsPage({ onEventSelect }) {
           
           {/* Event Manager Label */}
           <div style={{
-            fontSize: '16px',
+            fontSize: 'clamp(14px, 3vw, 16px)',
             fontWeight: '500',
-            color: '#9ca3af'
+            color: '#9ca3af',
+            display: window.innerWidth > 480 ? 'block' : 'none'
           }}>
             Event Manager
           </div>
         </div>
 
         {/* Right Side - User Info and Actions */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+        <div style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          gap: 'clamp(8px, 2vw, 16px)',
+          flexShrink: 0
+        }}>
           {/* User Info */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 'clamp(8px, 2vw, 12px)' }}>
             <div style={{
-              width: '40px',
-              height: '40px',
+              width: 'clamp(32px, 8vw, 40px)',
+              height: 'clamp(32px, 8vw, 40px)',
               borderRadius: '50%',
               backgroundColor: '#6366f1',
               display: 'flex',
@@ -817,33 +835,47 @@ export default function EventsPage({ onEventSelect }) {
               justifyContent: 'center',
               color: 'white',
               fontWeight: '600',
-              fontSize: '16px'
+              fontSize: 'clamp(12px, 3vw, 16px)'
             }}>
               {user?.email ? user.email.charAt(0).toUpperCase() : 'P'}
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <div style={{ 
+              display: 'flex', 
+              flexDirection: 'column',
+              minWidth: '0'
+            }}>
               <span style={{
                 color: 'white',
-                fontSize: '14px',
-                fontWeight: '500'
+                fontSize: 'clamp(12px, 2.5vw, 14px)',
+                fontWeight: '500',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                maxWidth: 'clamp(80px, 20vw, 150px)'
               }}>
                 {user?.email || 'payalm.lenka'}
               </span>
               <span style={{
-                fontSize: '12px',
-                padding: '2px 8px',
+                fontSize: 'clamp(10px, 2vw, 12px)',
+                padding: 'clamp(1px, 0.5vw, 2px) clamp(6px, 1.5vw, 8px)',
                 borderRadius: '12px',
                 backgroundColor: isAdmin ? '#10b981' : '#f59e0b',
                 color: 'white',
-                fontWeight: '500'
+                fontWeight: '500',
+                whiteSpace: 'nowrap'
               }}>
-                {isAdmin ? 'Administrator' : 'User'}
+                {isAdmin ? 'Admin' : 'User'}
               </span>
             </div>
           </div>
 
           {/* Action Buttons */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: 'clamp(6px, 1.5vw, 12px)',
+            flexWrap: 'wrap'
+          }}>
             {isAdmin && (
               <button
                 onClick={() => openNewEventModal()}
