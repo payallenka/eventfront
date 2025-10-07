@@ -714,6 +714,197 @@ export default function EventsPage({ onEventSelect }) {
             50% { transform: scale(1.02); background-color: rgba(59, 130, 246, 0.3); }
             100% { transform: scale(1); }
           }
+
+          /* Responsive grid styles */
+          .dashboard-grid {
+            display: grid;
+            gap: 20px;
+            grid-template-columns: 1fr 1fr;
+          }
+
+          .event-manager-label {
+            font-size: clamp(14px, 3vw, 16px);
+            font-weight: 500;
+            color: #9ca3af;
+            display: block;
+          }
+
+          /* Calendar responsive styles */
+          .calendar-container {
+            background-color: rgba(31, 41, 55, 0.4);
+            border-radius: clamp(8px, 2vw, 12px);
+            padding: clamp(12px, 3vw, 20px);
+            border: 1px solid rgba(55, 65, 81, 0.3);
+          }
+
+          .calendar-day-headers {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: clamp(1px, 0.5vw, 2px);
+            margin-bottom: clamp(8px, 2vw, 12px);
+          }
+
+          .calendar-day-header {
+            text-align: center;
+            padding: clamp(6px, 2vw, 12px);
+            font-weight: 600;
+            color: #9ca3af;
+            font-size: clamp(10px, 2.5vw, 14px);
+            background-color: rgba(55, 65, 81, 0.3);
+            border-radius: clamp(3px, 1vw, 6px);
+          }
+
+          .calendar-days-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: clamp(1px, 0.5vw, 2px);
+          }
+
+          .calendar-day {
+            min-height: clamp(80px, 15vw, 120px);
+            padding: clamp(4px, 1.5vw, 8px);
+            border-radius: clamp(3px, 1vw, 6px);
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            display: flex;
+            flex-direction: column;
+          }
+
+          .calendar-day-number {
+            font-weight: 600;
+            font-size: clamp(10px, 2.5vw, 14px);
+            margin-bottom: clamp(3px, 1vw, 6px);
+          }
+
+          .calendar-events {
+            display: flex;
+            flex-direction: column;
+            gap: clamp(1px, 0.3vw, 2px);
+            flex: 1;
+          }
+
+          .calendar-event-item {
+            font-size: clamp(8px, 2vw, 11px);
+            padding: clamp(2px, 0.8vw, 3px) clamp(3px, 1.2vw, 6px);
+            color: white;
+            border-radius: clamp(2px, 0.5vw, 3px);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            cursor: pointer;
+            font-weight: 500;
+          }
+
+          .calendar-event-more {
+            font-size: clamp(7px, 1.8vw, 10px);
+            color: #9ca3af;
+            font-style: italic;
+            padding: clamp(1px, 0.5vw, 2px);
+          }
+
+          /* Navigation responsive styles */
+          .calendar-navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: clamp(16px, 4vw, 24px);
+            background-color: rgba(55, 65, 81, 0.3);
+            padding: clamp(12px, 3vw, 16px) clamp(16px, 4vw, 20px);
+            border-radius: clamp(8px, 2vw, 12px);
+            flex-wrap: wrap;
+            gap: clamp(8px, 2vw, 12px);
+          }
+
+          .calendar-nav-button {
+            background-color: rgba(55, 65, 81, 0.5);
+            color: white;
+            border: none;
+            padding: clamp(6px, 1.5vw, 8px) clamp(12px, 3vw, 16px);
+            border-radius: clamp(4px, 1vw, 6px);
+            cursor: pointer;
+            font-size: clamp(12px, 2.5vw, 14px);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: clamp(4px, 1vw, 6px);
+          }
+
+          .calendar-nav-title {
+            display: flex;
+            align-items: center;
+            gap: clamp(8px, 2vw, 12px);
+            flex-wrap: wrap;
+            justify-content: center;
+          }
+
+          .calendar-month-title {
+            font-size: clamp(14px, 3.5vw, 18px);
+            font-weight: 600;
+            color: white;
+            margin: 0;
+          }
+
+          .calendar-today-button {
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            padding: clamp(3px, 1vw, 4px) clamp(6px, 1.5vw, 8px);
+            border-radius: clamp(3px, 1vw, 4px);
+            cursor: pointer;
+            font-size: clamp(10px, 2vw, 12px);
+            font-weight: 500;
+          }
+
+          @media (max-width: 768px) {
+            .dashboard-grid {
+              grid-template-columns: 1fr;
+            }
+            
+            .calendar-navigation {
+              flex-direction: column;
+              text-align: center;
+            }
+            
+            .calendar-nav-title {
+              order: -1;
+              width: 100%;
+              justify-content: center;
+            }
+          }
+
+          @media (max-width: 480px) {
+            .event-manager-label {
+              display: none;
+            }
+            
+            .calendar-day {
+              min-height: clamp(60px, 12vw, 80px);
+            }
+            
+            .calendar-day-header {
+              padding: clamp(4px, 1vw, 6px);
+            }
+            
+            .calendar-navigation {
+              gap: clamp(6px, 1.5vw, 8px);
+            }
+          }
+
+          @media (max-width: 320px) {
+            .calendar-day {
+              min-height: clamp(50px, 10vw, 60px);
+            }
+            
+            .calendar-event-item {
+              font-size: clamp(7px, 1.5vw, 8px);
+              padding: 1px 2px;
+            }
+            
+            .calendar-day-header {
+              font-size: clamp(8px, 2vw, 10px);
+              padding: clamp(3px, 0.8vw, 4px);
+            }
+          }
         `}
       </style>
       
@@ -806,12 +997,7 @@ export default function EventsPage({ onEventSelect }) {
           </div>
           
           {/* Event Manager Label */}
-          <div style={{
-            fontSize: 'clamp(14px, 3vw, 16px)',
-            fontWeight: '500',
-            color: '#9ca3af',
-            display: window.innerWidth > 480 ? 'block' : 'none'
-          }}>
+          <div className="event-manager-label">
             Event Manager
           </div>
         </div>
@@ -951,56 +1137,25 @@ export default function EventsPage({ onEventSelect }) {
         </div>
       )}
 
-      <div style={{ padding: '24px 32px' }}>
+      <div style={{ padding: 'clamp(12px, 3vw, 32px) clamp(16px, 4vw, 32px)' }}>
         {/* Calendar Navigation */}
-        <div style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: '24px',
-          backgroundColor: 'rgba(55, 65, 81, 0.3)',
-          padding: '16px 20px',
-          borderRadius: '12px'
-        }}>
+        <div className="calendar-navigation">
           <button
             onClick={() => navigateMonth(-1)}
-            style={{
-              backgroundColor: 'rgba(55, 65, 81, 0.5)',
-              color: 'white',
-              border: 'none',
-              padding: '8px 16px',
-              borderRadius: '6px',
-              cursor: 'pointer',
-              fontSize: '14px',
-              fontWeight: '500'
-            }}
+            className="calendar-nav-button"
           >
-            <FaChevronLeft className="mr-1" />
-            Previous
+            <FaChevronLeft />
+            <span style={{ display: window.innerWidth > 380 ? 'inline' : 'none' }}>Previous</span>
           </button>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <h2 style={{
-              fontSize: '18px',
-              fontWeight: '600',
-              color: 'white',
-              margin: 0
-            }}>
+          <div className="calendar-nav-title">
+            <h2 className="calendar-month-title">
               {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
             </h2>
             
             <button
               onClick={navigateToToday}
-              style={{
-                backgroundColor: '#3b82f6',
-                color: 'white',
-                border: 'none',
-                padding: '4px 8px',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                fontSize: '12px',
-                fontWeight: '500'
-              }}
+              className="calendar-today-button"
             >
               Today
             </button>
@@ -1008,72 +1163,38 @@ export default function EventsPage({ onEventSelect }) {
 
           <button
             onClick={() => navigateMonth(1)}
-            style={{
-              backgroundColor: 'rgba(55, 65, 81, 0.5)',
-              color: 'white',
-              border: 'none',
-              padding: '8px 16px',
-              borderRadius: '6px',
-              cursor: 'pointer',
-              fontSize: '14px',
-              fontWeight: '500'
-            }}
+            className="calendar-nav-button"
           >
-            Next
-            <FaChevronRight className="ml-1" />
+            <span style={{ display: window.innerWidth > 380 ? 'inline' : 'none' }}>Next</span>
+            <FaChevronRight />
           </button>
         </div>
 
         {/* Calendar Grid */}
-        <div style={{
-          backgroundColor: 'rgba(31, 41, 55, 0.4)',
-          borderRadius: '12px',
-          padding: '20px',
-          border: '1px solid rgba(55, 65, 81, 0.3)'
-        }}>
+        <div className="calendar-container">
           {/* Day Headers */}
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(7, 1fr)',
-            gap: '2px',
-            marginBottom: '12px'
-          }}>
+          <div className="calendar-day-headers">
             {dayNames.map(day => (
               <div
                 key={day}
-                style={{
-                  textAlign: 'center',
-                  padding: '12px',
-                  fontWeight: '600',
-                  color: '#9ca3af',
-                  fontSize: '14px',
-                  backgroundColor: 'rgba(55, 65, 81, 0.3)',
-                  borderRadius: '6px'
-                }}
+                className="calendar-day-header"
               >
-                {day}
+                {window.innerWidth > 480 ? day : day.substring(0, 1)}
               </div>
             ))}
           </div>
 
           {/* Calendar Days */}
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(7, 1fr)',
-            gap: '2px'
-          }}>
+          <div className="calendar-days-grid">
             {calendarDays.map(({ date, isCurrentMonth }, index) => {
               const dayEvents = getEventsForDate(date);
               const isToday = isSameDay(date, today);
               const hasSelectedEvent = selectedEvent && dayEvents.some(event => event.id === selectedEvent.id);
-              
-              // Debug logging for the selected event day
-              if (hasSelectedEvent) {
-              }
 
               return (
                 <div
                   key={index}
+                  className="calendar-day"
                   title={isAdmin ? "Click to view events • Double-click to create event" : "Click to view events"}
                   onClick={(e) => {
                     // Only process if clicking directly on the day container or date number
@@ -1090,14 +1211,9 @@ export default function EventsPage({ onEventSelect }) {
                   }}
                   onDoubleClick={() => isAdmin && openNewEventModal(date)}
                   style={{
-                    minHeight: '120px',
-                    padding: '8px',
                     backgroundColor: isCurrentMonth 
                       ? (isToday ? 'rgba(59, 130, 246, 0.2)' : 'rgba(55, 65, 81, 0.2)')
                       : 'rgba(31, 41, 55, 0.2)',
-                    borderRadius: '6px',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s ease-in-out',
                     border: hasSelectedEvent ? '2px solid #3b82f6' : '1px solid rgba(55, 65, 81, 0.3)',
                     opacity: isCurrentMonth ? 1 : 0.4
                   }}
@@ -1113,38 +1229,27 @@ export default function EventsPage({ onEventSelect }) {
                   }}
                 >
                   {/* Date Number */}
-                  <div style={{
-                    fontWeight: '600',
-                    fontSize: '14px',
-                    color: isToday ? '#3b82f6' : (isCurrentMonth ? '#e5e7eb' : '#6b7280'),
-                    marginBottom: '6px'
+                  <div className="calendar-day-number" style={{
+                    color: isToday ? '#3b82f6' : (isCurrentMonth ? '#e5e7eb' : '#6b7280')
                   }}>
                     {date.getDate()}
                   </div>
 
                   {/* Events for this date */}
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                    {dayEvents.slice(0, 4).map((event, i) => (
+                  <div className="calendar-events">
+                    {dayEvents.slice(0, window.innerWidth > 480 ? 4 : 2).map((event, i) => (
                       <div
                         key={event.id}
                         data-event-item="true"
+                        className="calendar-event-item"
                         onClick={(e) => {
                           e.stopPropagation();
                           openEventDetails(event);
                         }}
                         style={{
-                          fontSize: '11px',
-                          padding: '3px 6px',
                           backgroundColor: i % 4 === 0 ? '#3b82f6' : 
                                          i % 4 === 1 ? '#10b981' : 
-                                         i % 4 === 2 ? '#f59e0b' : '#ef4444',
-                          color: 'white',
-                          borderRadius: '3px',
-                          overflow: 'hidden',
-                          textOverflow: 'ellipsis',
-                          whiteSpace: 'nowrap',
-                          cursor: 'pointer',
-                          fontWeight: '500'
+                                         i % 4 === 2 ? '#f59e0b' : '#ef4444'
                         }}
                         title={isAdmin ? 
                           `${event.name}\n${event.description || ''}\nClick to view details` : 
@@ -1154,14 +1259,9 @@ export default function EventsPage({ onEventSelect }) {
                         {event.name}
                       </div>
                     ))}
-                    {dayEvents.length > 4 && (
-                      <div style={{
-                        fontSize: '10px',
-                        color: '#9ca3af',
-                        fontStyle: 'italic',
-                        padding: '2px'
-                      }}>
-                        +{dayEvents.length - 4} more
+                    {dayEvents.length > (window.innerWidth > 480 ? 4 : 2) && (
+                      <div className="calendar-event-more">
+                        +{dayEvents.length - (window.innerWidth > 480 ? 4 : 2)} more
                       </div>
                     )}
                   </div>
@@ -1522,11 +1622,7 @@ export default function EventsPage({ onEventSelect }) {
               </div>
 
               {/* Dashboard Grid */}
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: '1fr 1fr',
-                gap: '20px'
-              }}>
+              <div className="dashboard-grid">
                 {/* Tasks Section */}
                 <div style={{
                   backgroundColor: '#374151',
