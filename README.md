@@ -66,6 +66,7 @@ This is the React-based frontend for the Event Management Dashboard. It allows u
 - Add user profile management and role-based permissions.
 - Enhance calendar view with drag-and-drop event/task management.
 - Add analytics and reporting features.
+- Implement user-specific task and event views (code for user-specific filtering exists in `UserTaskManager.jsx` but is not currently active in the main UI).
 
 ## Current Limitations
 
@@ -74,3 +75,21 @@ This is the React-based frontend for the Event Management Dashboard. It allows u
 - No email or push notification integration.
 - Limited user roles (admin/user) and no granular permissions.
 - No support for offline usage or PWA features.
+
+## Evaluator Instructions
+
+1. **Register as an Admin:**
+   - On the login page, register a new account and select the admin role (if available).
+   - Admins can create, edit, and delete events, attendees, and tasks.
+
+2. **Register as a User:**
+   - Log out and register a new account as a regular user.
+   - Users can view all events and all tasks, and update task status.
+
+3. **Test Functionality:**
+   - As an admin, perform event, attendee, and task management actions.
+   - As a user, verify you can view and update all tasks (not just your own).
+   - All changes should reflect in real time for both roles.
+
+4. **Switch Roles:**
+   - Log in and out to switch between admin and user accounts to observe role-based access and UI changes.
