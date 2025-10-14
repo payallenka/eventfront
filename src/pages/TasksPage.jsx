@@ -42,7 +42,7 @@ export default function TasksPage() {
 
   const fetchEvents = async () => {
     try {
-      const data = await apiCall("https://eventbackend-kb4u.onrender.com/api/events");
+      const data = await apiCall("http://localhost:8080/api/events");
       setEvents(data);
       if (data.length > 0 && !selectedEventId) {
         setSelectedEventId(data[0].id);
@@ -55,7 +55,7 @@ export default function TasksPage() {
   const fetchTasks = async () => {
     if (!selectedEventId) return;
     try {
-      const data = await apiCall(`https://eventbackend-kb4u.onrender.com/api/events/${selectedEventId}/tasks`);
+      const data = await apiCall(`http://localhost:8080/api/events/${selectedEventId}/tasks`);
       setTasks(data);
     } catch (err) {
       setError(err.message);
@@ -78,8 +78,8 @@ export default function TasksPage() {
     }
 
     const url = editingId 
-      ? `https://eventbackend-kb4u.onrender.com/api/events/${selectedEventId}/tasks/${editingId}`
-      : `https://eventbackend-kb4u.onrender.com/api/events/${selectedEventId}/tasks`;
+      ? `http://localhost:8080/api/events/${selectedEventId}/tasks/${editingId}`
+      : `http://localhost:8080/api/events/${selectedEventId}/tasks`;
     const method = editingId ? "PUT" : "POST";
 
     try {
@@ -109,7 +109,7 @@ export default function TasksPage() {
     if (!window.confirm("Are you sure you want to delete this task?")) return;
 
     try {
-      await apiCall(`https://eventbackend-kb4u.onrender.com/api/events/${selectedEventId}/tasks/${id}`, { method: "DELETE" });
+      await apiCall(`http://localhost:8080/api/events/${selectedEventId}/tasks/${id}`, { method: "DELETE" });
       setTasks(tasks.filter(t => t.id !== id));
     } catch (err) {
       setError(err.message);
@@ -121,7 +121,7 @@ export default function TasksPage() {
     
     const updatedTask = { ...task, completed: !task.completed };
     try {
-      const result = await apiCall(`https://eventbackend-kb4u.onrender.com/api/events/${selectedEventId}/tasks/${task.id}`, {
+      const result = await apiCall(`http://localhost:8080/api/events/${selectedEventId}/tasks/${task.id}`, {
         method: "PUT",
         body: JSON.stringify(updatedTask),
       });

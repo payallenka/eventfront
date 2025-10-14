@@ -21,21 +21,45 @@ const apiCall = async (url, options = {}) => {
 };
 
 export default function TaskManager({ eventId }) {
+  console.log("TaskManager rendered, isAdmin:", useAuth().isAdmin);
   const { isAdmin } = useAuth();
   const [tasks, setTasks] = useState([]);
-  const [form, setForm] = useState({ title: "", description: "", completed: false });
+  const [attendees, setAttendees] = useState([]); // NEW: attendees for assignment
+  const [form, setForm] = useState({ title: "", description: "", completed: false, deadline: "", assignedAttendeeId: "" });
   const [editingId, setEditingId] = useState(null);
   const [error, setError] = useState(null);
-  const API_URL = `https://eventbackend-kb4u.onrender.com/api/events/${eventId}/tasks`;
+  const API_URL = `http://localhost:8080/api/events/${eventId}/tasks`;
+  const ATTENDEE_URL = `http://localhost:8080/api/events/${eventId}/attendees`;
 
   useEffect(() => {
-    fetchTasks();
+    // Fetch attendees first, then fetch tasks
+    fetchAttendees().then(fetchTasks);
   }, []);
+
+  const fetchAttendees = async () => {
+    try {
+      const data = await apiCall(ATTENDEE_URL);
+      setAttendees(data);
+      return data;
+    } catch (err) {
+      setAttendees([]);
+      return [];
+    }
+  };
 
   const fetchTasks = async () => {
     try {
       const data = await apiCall(API_URL);
-      setTasks(data);
+      // Map attendee_id to assignedAttendee object for each task
+      const tasksWithAttendee = data.map(task => {
+        const attendeeId = task.attendee_id || task.assignedAttendeeId || (task.assignedAttendee && task.assignedAttendee.id);
+        const attendeeObj = attendees.find(a => a.id === attendeeId);
+        return {
+          ...task,
+          assignedAttendee: attendeeObj || null
+        };
+      });
+      setTasks(tasksWithAttendee);
     } catch (err) {
       setError(err.message);
     }
@@ -47,20 +71,23 @@ export default function TaskManager({ eventId }) {
   };
 
   const handleSubmit = async (e) => {
+    console.log('handleSubmit called, isAdmin:', isAdmin);
     e.preventDefault();
     if (!isAdmin) return;
-
     const url = editingId ? `${API_URL}/${editingId}` : API_URL;
     const method = editingId ? "PUT" : "POST";
-
+    const payload = {
+      title: form.title,
+      description: form.description,
+      completed: form.completed,
+      deadline: form.deadline || null,
+      attendee_id: form.assignedAttendeeId || null
+    };
+    console.log('Submitting payload:', payload);
     try {
-      const result = await apiCall(url, { method, body: JSON.stringify(form) });
-      if (editingId) {
-        setTasks(tasks.map(t => t.id === editingId ? result : t));
-      } else {
-        setTasks([...tasks, result]);
-      }
-      setForm({ title: "", description: "", completed: false });
+      await apiCall(url, { method, body: JSON.stringify(payload) });
+      await fetchTasks(); // Always re-fetch tasks after submit
+      setForm({ title: "", description: "", completed: false, deadline: "", assignedAttendeeId: "" });
       setEditingId(null);
     } catch (err) {
       setError(err.message);
@@ -69,28 +96,43 @@ export default function TaskManager({ eventId }) {
 
   const startEdit = (task) => {
     setEditingId(task.id);
-    setForm({ title: task.title, description: task.description, completed: task.completed });
+    setForm({
+      title: task.title || "",
+      description: task.description || "",
+      completed: task.completed || false,
+      deadline: task.deadline || "",
+      assignedAttendeeId: task.assignedAttendee && task.assignedAttendee.id ? task.assignedAttendee.id : ""
+    });
   };
 
   const handleDelete = async (id) => {
     if (!isAdmin) return;
     try {
       await apiCall(`${API_URL}/${id}`, { method: "DELETE" });
-      setTasks(tasks.filter(t => t.id !== id));
+      await fetchTasks(); // Always re-fetch tasks after delete
     } catch (err) {
       setError(err.message);
     }
   };
 
   const toggleCompleted = async (task) => {
+    console.log('toggleCompleted called, isAdmin:', isAdmin, 'task:', task);
     if (!isAdmin) return;
     const updatedTask = { ...task, completed: !task.completed };
+    const updatePayload = {
+      title: updatedTask.title,
+      description: updatedTask.description,
+      completed: updatedTask.completed,
+      deadline: updatedTask.deadline || null,
+      attendee_id: updatedTask.assignedAttendee ? updatedTask.assignedAttendee.id : null
+    };
+    console.log('Toggle completed payload:', updatePayload);
     try {
-      const result = await apiCall(`${API_URL}/${task.id}`, {
+      await apiCall(`${API_URL}/${task.id}`, {
         method: "PUT",
-        body: JSON.stringify(updatedTask),
+        body: JSON.stringify(updatePayload)
       });
-      setTasks(tasks.map(t => t.id === task.id ? result : t));
+      await fetchTasks(); // Always re-fetch tasks after update
     } catch (err) {
       setError(err.message);
     }
@@ -122,7 +164,6 @@ export default function TaskManager({ eventId }) {
           {error}
         </div>
       )}
-      
       {isAdmin && (
         <div style={{ marginBottom: 'clamp(1.5rem, 4vw, 2rem)' }}>
           <form onSubmit={handleSubmit} style={{
@@ -184,6 +225,100 @@ export default function TaskManager({ eventId }) {
                 e.target.style.boxShadow = 'none';
               }}
             />
+            {/* NEW: Deadline input */}
+            <label htmlFor="deadline" style={{ color: '#a5b4fc', fontWeight: 600, marginBottom: 4 }}>Deadline</label>
+            <input
+              type="date"
+              id="deadline"
+              name="deadline"
+              value={form.deadline}
+              onChange={handleChange}
+              style={{
+                padding: 'clamp(0.75rem, 2vw, 1rem)',
+                backgroundColor: '#374151',
+                borderRadius: 'clamp(8px, 2vw, 12px)',
+                color: 'white',
+                border: '1px solid #6366f1', // more visible border
+                outline: 'none',
+                fontSize: 'clamp(0.875rem, 2.5vw, 1rem)',
+                transition: 'all 0.15s ease-in-out',
+                minHeight: '44px',
+                marginBottom: 12
+              }}
+            />
+            {/* NEW: Attendee dropdown */}
+            <label htmlFor="assignedAttendeeId" style={{ color: '#a5b4fc', fontWeight: 600, marginBottom: 4 }}>Assign to Attendee</label>
+            <select
+              id="assignedAttendeeId"
+              name="assignedAttendeeId"
+              value={form.assignedAttendeeId}
+              onChange={handleChange}
+              style={{
+                padding: 'clamp(0.75rem, 2vw, 1rem)',
+                backgroundColor: '#374151',
+                borderRadius: 'clamp(8px, 2vw, 12px)',
+                color: 'white',
+                border: '1px solid #6366f1', // more visible border
+                outline: 'none',
+                fontSize: 'clamp(0.875rem, 2.5vw, 1rem)',
+                transition: 'all 0.15s ease-in-out',
+                minHeight: '44px',
+                marginBottom: 16
+              }}
+            >
+              <option value="">Assign to Attendee (optional)</option>
+              {attendees.map(a => (
+                <option key={a.id} value={a.id}>{a.name} ({a.email})</option>
+              ))}
+            </select>
+            {/* DEBUG: Deadline and Attendee fields section */}
+            <div style={{ background: '#1e293b', border: '2px dashed #f59e0b', padding: 12, marginBottom: 16 }}>
+              <div style={{ color: '#f59e0b', fontWeight: 700, marginBottom: 8 }}>DEBUG: Deadline & Attendee Fields</div>
+              <label htmlFor="deadline" style={{ color: '#a5b4fc', fontWeight: 600, marginBottom: 4 }}>Deadline</label>
+              <input
+                type="date"
+                id="deadline"
+                name="deadline"
+                value={form.deadline}
+                onChange={handleChange}
+                style={{
+                  padding: 'clamp(0.75rem, 2vw, 1rem)',
+                  backgroundColor: '#374151',
+                  borderRadius: 'clamp(8px, 2vw, 12px)',
+                  color: 'white',
+                  border: '1px solid #6366f1',
+                  outline: 'none',
+                  fontSize: 'clamp(0.875rem, 2.5vw, 1rem)',
+                  transition: 'all 0.15s ease-in-out',
+                  minHeight: '44px',
+                  marginBottom: 12
+                }}
+              />
+              <label htmlFor="assignedAttendeeId" style={{ color: '#a5b4fc', fontWeight: 600, marginBottom: 4 }}>Assign to Attendee</label>
+              <select
+                id="assignedAttendeeId"
+                name="assignedAttendeeId"
+                value={form.assignedAttendeeId}
+                onChange={handleChange}
+                style={{
+                  padding: 'clamp(0.75rem, 2vw, 1rem)',
+                  backgroundColor: '#374151',
+                  borderRadius: 'clamp(8px, 2vw, 12px)',
+                  color: 'white',
+                  border: '1px solid #6366f1',
+                  outline: 'none',
+                  fontSize: 'clamp(0.875rem, 2.5vw, 1rem)',
+                  transition: 'all 0.15s ease-in-out',
+                  minHeight: '44px',
+                  marginBottom: 16
+                }}
+              >
+                <option value="">Assign to Attendee (optional)</option>
+                {attendees.map(a => (
+                  <option key={a.id} value={a.id}>{a.name} ({a.email})</option>
+                ))}
+              </select>
+            </div>
             <div style={{ 
               display: 'grid',
               gridTemplateColumns: editingId ? '1fr 1fr' : '1fr',
@@ -220,7 +355,7 @@ export default function TaskManager({ eventId }) {
               {editingId && (
                 <button 
                   type="button" 
-                  onClick={() => { setEditingId(null); setForm({ title: "", description: "", completed: false }); }} 
+                  onClick={() => { setEditingId(null); setForm({ title: "", description: "", completed: false, deadline: "", assignedAttendeeId: "" }); }} 
                   style={{
                     backgroundColor: '#4b5563',
                     color: 'white',
@@ -247,7 +382,6 @@ export default function TaskManager({ eventId }) {
           </form>
         </div>
       )}
-      
       <div>
         <h5 style={{
           fontSize: '16px',
@@ -327,7 +461,6 @@ export default function TaskManager({ eventId }) {
                       }}
                     />
                   )}
-                  
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '2px' }}>
                       <h6 style={{
@@ -342,7 +475,6 @@ export default function TaskManager({ eventId }) {
                       }}>
                         {t.title}
                       </h6>
-                      
                       {/* Compact Status Badge */}
                       <span style={{
                         backgroundColor: t.completed ? '#10b981' : '#f59e0b',
@@ -358,7 +490,6 @@ export default function TaskManager({ eventId }) {
                         {t.completed ? 'Done' : 'Pending'}
                       </span>
                     </div>
-                    
                     {t.description && (
                       <p style={{
                         color: t.completed ? '#6b7280' : '#d1d5db',
@@ -373,9 +504,17 @@ export default function TaskManager({ eventId }) {
                         {t.description}
                       </p>
                     )}
+                    {/* NEW: Deadline and Attendee display */}
+                    <div style={{ display: 'flex', gap: '16px', marginTop: '4px', alignItems: 'center', fontSize: '12px', color: '#a5b4fc' }}>
+                      {t.deadline && (
+                        <span>Deadline: {t.deadline}</span>
+                      )}
+                      {t.assignedAttendee && (
+                        <span>Assigned: {t.assignedAttendee.name} ({t.assignedAttendee.email})</span>
+                      )}
+                    </div>
                   </div>
                 </div>
-
                 {/* Right Side - Action Buttons */}
                 {isAdmin && (
                   <div style={{
@@ -413,7 +552,6 @@ export default function TaskManager({ eventId }) {
                     >
                       {t.completed ? 'Undo' : 'Done'}
                     </button>
-                    
                     {/* Edit Button */}
                     <button 
                       onClick={() => startEdit(t)} 
@@ -442,7 +580,6 @@ export default function TaskManager({ eventId }) {
                     >
                       <FaEdit />
                     </button>
-                    
                     {/* Delete Button */}
                     <button 
                       onClick={() => handleDelete(t.id)} 

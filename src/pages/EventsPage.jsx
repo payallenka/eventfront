@@ -71,7 +71,7 @@ export default function EventsPage({ onEventSelect }) {
   const [editingAttendee, setEditingAttendee] = useState(null);
   const [taskForm, setTaskForm] = useState({ title: '', description: '' });
   const [attendeeForm, setAttendeeForm] = useState({ name: '', email: '' });
-  const API_URL = "https://eventbackend-kb4u.onrender.com/api/events";
+  const API_URL = "http://localhost:8080/api/events";
 
   const handleWebSocketMessage = (message) => {
     try {
@@ -124,7 +124,7 @@ export default function EventsPage({ onEventSelect }) {
     error: wsError,
     sendMessage,
     isConnected
-  } = useWebSocket('wss://eventbackend-kb4u.onrender.com/ws/events', {
+  } = useWebSocket('ws://localhost:8080/ws/events', {
     onMessage: handleWebSocketMessage,
     onError: (error) => {
       console.error('WebSocket error:', error);
@@ -445,14 +445,14 @@ export default function EventsPage({ onEventSelect }) {
     setEventAttendees([]);
     
     Promise.all([
-      apiCall(`https://eventbackend-kb4u.onrender.com/api/events/${event.id}/tasks`).then(data => {
+      apiCall(`http://localhost:8080/api/events/${event.id}/tasks`).then(data => {
         setEventTasks(data);
       }).catch(err => {
         console.error('Error fetching tasks:', err);
         setEventTasks([]);
       }),
       
-      apiCall(`https://eventbackend-kb4u.onrender.com/api/events/${event.id}/attendees`).then(data => {
+      apiCall(`http://localhost:8080/api/events/${event.id}/attendees`).then(data => {
         setEventAttendees(data);
       }).catch(err => {
         console.error('Error fetching attendees:', err);
@@ -483,7 +483,7 @@ export default function EventsPage({ onEventSelect }) {
         completed: !currentStatus
       };
       
-      await apiCall(`https://eventbackend-kb4u.onrender.com/api/events/${selectedEvent.id}/tasks/${taskId}`, {
+      await apiCall(`http://localhost:8080/api/events/${selectedEvent.id}/tasks/${taskId}`, {
         method: 'PUT',
         body: JSON.stringify(taskUpdate)
       });
@@ -519,29 +519,33 @@ export default function EventsPage({ onEventSelect }) {
     try {
       if (editingTask) {
         // Update existing task
-        const updatedTask = await apiCall(`https://eventbackend-kb4u.onrender.com/api/events/${selectedEvent.id}/tasks/${editingTask.id}`, {
+        const updatedTask = await apiCall(`http://localhost:8080/api/events/${selectedEvent.id}/tasks/${editingTask.id}`, {
           method: 'PUT',
           body: JSON.stringify({
             title: taskForm.title,
             description: taskForm.description,
-            completed: editingTask.completed
+            completed: editingTask.completed,
+            deadline: taskForm.deadline !== undefined && taskForm.deadline !== '' ? taskForm.deadline : editingTask.deadline || null,
+            assignedAttendee: taskForm.assignedAttendeeId !== undefined && taskForm.assignedAttendeeId !== ''
+              ? { id: taskForm.assignedAttendeeId }
+              : (editingTask.assignedAttendee ? { id: editingTask.assignedAttendee.id } : null)
           })
         });
-        
         setEventTasks(eventTasks.map(task => 
           task.id === editingTask.id ? updatedTask : task
         ));
       } else {
         // Create new task
-        const newTask = await apiCall(`https://eventbackend-kb4u.onrender.com/api/events/${selectedEvent.id}/tasks`, {
+        const newTask = await apiCall(`http://localhost:8080/api/events/${selectedEvent.id}/tasks`, {
           method: 'POST',
           body: JSON.stringify({
             title: taskForm.title,
             description: taskForm.description,
-            completed: false
+            completed: false,
+            deadline: taskForm.deadline || null,
+            assignedAttendee: taskForm.assignedAttendeeId ? { id: taskForm.assignedAttendeeId } : null
           })
         });
-        
         setEventTasks([...eventTasks, newTask]);
       }
       
@@ -560,7 +564,7 @@ export default function EventsPage({ onEventSelect }) {
     try {
       if (editingAttendee) {
         // Update existing attendee
-        const updatedAttendee = await apiCall(`https://eventbackend-kb4u.onrender.com/api/events/${selectedEvent.id}/attendees/${editingAttendee.id}`, {
+        const updatedAttendee = await apiCall(`http://localhost:8080/api/events/${selectedEvent.id}/attendees/${editingAttendee.id}`, {
           method: 'PUT',
           body: JSON.stringify({
             name: attendeeForm.name,
@@ -574,7 +578,7 @@ export default function EventsPage({ onEventSelect }) {
         ));
       } else {
         // Create new attendee
-        const newAttendee = await apiCall(`https://eventbackend-kb4u.onrender.com/api/events/${selectedEvent.id}/attendees`, {
+        const newAttendee = await apiCall(`http://localhost:8080/api/events/${selectedEvent.id}/attendees`, {
           method: 'POST',
           body: JSON.stringify({
             name: attendeeForm.name,
@@ -615,7 +619,7 @@ export default function EventsPage({ onEventSelect }) {
     
     if (window.confirm('Are you sure you want to delete this task?')) {
       try {
-        await apiCall(`https://eventbackend-kb4u.onrender.com/api/events/${selectedEvent.id}/tasks/${taskId}`, {
+        await apiCall(`http://localhost:8080/api/events/${selectedEvent.id}/tasks/${taskId}`, {
           method: 'DELETE'
         });
         
@@ -632,7 +636,7 @@ export default function EventsPage({ onEventSelect }) {
     
     if (window.confirm('Are you sure you want to remove this attendee?')) {
       try {
-        await apiCall(`https://eventbackend-kb4u.onrender.com/api/events/${selectedEvent.id}/attendees/${attendeeId}`, {
+        await apiCall(`http://localhost:8080/api/events/${selectedEvent.id}/attendees/${attendeeId}`, {
           method: 'DELETE'
         });
         
@@ -963,7 +967,7 @@ export default function EventsPage({ onEventSelect }) {
             onClick={() => {
               
               // Test basic connectivity
-              fetch('https://eventbackend-kb4u.onrender.com/api/events')
+              fetch('http://localhost:8080/api/events')
                 .then(response => {
                   return response.json();
                 })
@@ -1669,83 +1673,95 @@ export default function EventsPage({ onEventSelect }) {
                         key={task.id} 
                         className={task.justUpdated ? 'task-update-animation' : ''}
                         style={{
-                        display: 'flex',
-                        alignItems: 'flex-start',
-                        gap: '8px',
-                        padding: '12px',
-                        borderBottom: '1px solid #4b5563',
-                        backgroundColor: task.justUpdated ? 'rgba(59, 130, 246, 0.2)' : 'rgba(55, 65, 81, 0.3)',
-                        borderRadius: '6px',
-                        marginBottom: '8px',
-                        transition: 'all 0.3s ease-in-out',
-                        border: task.justUpdated ? '1px solid #3b82f6' : '1px solid transparent'
-                      }}>
-                        <input
-                          type="checkbox"
-                          checked={task.completed}
-                          onChange={() => toggleTaskCompletion(task.id, task.completed)}
-                          style={{
-                            accentColor: '#3b82f6',
-                            cursor: 'pointer',
-                            marginTop: '2px'
-                          }}
-                        />
-                        <div style={{ flex: 1 }}>
-                          <div style={{
-                            color: task.completed ? '#9ca3af' : '#d1d5db',
-                            fontSize: '14px',
-                            fontWeight: '500',
-                            textDecoration: task.completed ? 'line-through' : 'none'
-                          }}>
-                            {task.title || 'Untitled Task'}
-                          </div>
-                          {task.description && (
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: '4px',
+                          padding: '12px',
+                          borderBottom: '1px solid #4b5563',
+                          backgroundColor: task.justUpdated ? 'rgba(59, 130, 246, 0.2)' : 'rgba(55, 65, 81, 0.3)',
+                          borderRadius: '6px',
+                          marginBottom: '8px',
+                          transition: 'all 0.3s ease-in-out',
+                          border: task.justUpdated ? '1px solid #3b82f6' : '1px solid transparent'
+                        }}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <input
+                            type="checkbox"
+                            checked={task.completed}
+                            onChange={() => toggleTaskCompletion(task.id, task.completed)}
+                            style={{
+                              accentColor: '#3b82f6',
+                              cursor: 'pointer',
+                              marginTop: '2px'
+                            }}
+                          />
+                          <div style={{ flex: 1 }}>
                             <div style={{
-                              color: task.completed ? '#6b7280' : '#9ca3af',
-                              fontSize: '12px',
-                              marginTop: '2px',
+                              color: task.completed ? '#9ca3af' : '#d1d5db',
+                              fontSize: '14px',
+                              fontWeight: '500',
                               textDecoration: task.completed ? 'line-through' : 'none'
                             }}>
-                              {task.description}
+                              {task.title || 'Untitled Task'}
+                            </div>
+                            {task.description && (
+                              <div style={{
+                                color: task.completed ? '#6b7280' : '#9ca3af',
+                                fontSize: '12px',
+                                marginTop: '2px',
+                                textDecoration: task.completed ? 'line-through' : 'none'
+                              }}>
+                                {task.description}
+                              </div>
+                            )}
+                          </div>
+                          {(() => {
+                            return isAdmin;
+                          })() && (
+                            <div style={{ display: 'flex', gap: '4px' }}>
+                              <button
+                                onClick={() => editTask(task)}
+                                style={{
+                                  backgroundColor: '#3b82f6',
+                                  color: 'white',
+                                  border: 'none',
+                                  borderRadius: '4px',
+                                  padding: '4px 6px',
+                                  cursor: 'pointer',
+                                  fontSize: '10px',
+                                  fontWeight: '500'
+                                }}
+                              >
+                                Edit
+                              </button>
+                              <button
+                                onClick={() => deleteTask(task.id)}
+                                style={{
+                                  backgroundColor: '#ef4444',
+                                  color: 'white',
+                                  border: 'none',
+                                  borderRadius: '4px',
+                                  padding: '4px 6px',
+                                  cursor: 'pointer',
+                                  fontSize: '10px',
+                                  fontWeight: '500'
+                                }}
+                              >
+                                Delete
+                              </button>
                             </div>
                           )}
                         </div>
-                        {(() => {
-                          return isAdmin;
-                        })() && (
-                          <div style={{ display: 'flex', gap: '4px' }}>
-                            <button
-                              onClick={() => editTask(task)}
-                              style={{
-                                backgroundColor: '#3b82f6',
-                                color: 'white',
-                                border: 'none',
-                                borderRadius: '4px',
-                                padding: '4px 6px',
-                                cursor: 'pointer',
-                                fontSize: '10px',
-                                fontWeight: '500'
-                              }}
-                            >
-                              Edit
-                            </button>
-                            <button
-                              onClick={() => deleteTask(task.id)}
-                              style={{
-                                backgroundColor: '#ef4444',
-                                color: 'white',
-                                border: 'none',
-                                borderRadius: '4px',
-                                padding: '4px 6px',
-                                cursor: 'pointer',
-                                fontSize: '10px',
-                                fontWeight: '500'
-                              }}
-                            >
-                              Delete
-                            </button>
-                          </div>
-                        )}
+                        {/* Show deadline and assigned attendee in a vertical, readable way */}
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', marginLeft: '28px', marginTop: '4px', fontSize: '12px', color: '#a5b4fc' }}>
+      {task.deadline && (
+        <span><b>Deadline:</b> {task.deadline}</span>
+      )}
+      {task.assignedAttendee && (
+        <span><b>Assigned:</b> {task.assignedAttendee.name} ({task.assignedAttendee.email})</span>
+      )}
+    </div>
                       </div>
                     ))}
                   </div>
@@ -1813,17 +1829,17 @@ export default function EventsPage({ onEventSelect }) {
                         key={attendee.id} 
                         className={attendee.justUpdated ? 'attendee-update-animation' : ''}
                         style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        padding: '12px',
-                        borderBottom: '1px solid #4b5563',
-                        backgroundColor: attendee.justUpdated ? 'rgba(59, 130, 246, 0.2)' : 'rgba(55, 65, 81, 0.3)',
-                        borderRadius: '6px',
-                        marginBottom: '8px',
-                        minWidth: 0,
-                        border: attendee.justUpdated ? '1px solid #3b82f6' : '1px solid transparent',
-                        transition: 'all 0.3s ease-in-out'
-                      }}>
+                          display: 'flex',
+                          flexDirection: 'column',
+                          padding: '12px',
+                          borderBottom: '1px solid #4b5563',
+                          backgroundColor: attendee.justUpdated ? 'rgba(59, 130, 246, 0.2)' : 'rgba(55, 65, 81, 0.3)',
+                          borderRadius: '6px',
+                          marginBottom: '8px',
+                          minWidth: 0,
+                          border: attendee.justUpdated ? '1px solid #3b82f6' : '1px solid transparent',
+                          transition: 'all 0.3s ease-in-out'
+                        }}>
                         <div style={{ 
                           display: 'flex', 
                           justifyContent: 'space-between', 
@@ -2047,6 +2063,50 @@ export default function EventsPage({ onEventSelect }) {
                     fontFamily: 'inherit'
                   }}
                 />
+
+                {/* Deadline input */}
+                <label htmlFor="deadline" style={{ color: '#a5b4fc', fontWeight: 600 }}>Deadline</label>
+                <input
+                  type="date"
+                  id="deadline"
+                  name="deadline"
+                  value={taskForm.deadline || ''}
+                  onChange={e => setTaskForm({ ...taskForm, deadline: e.target.value })}
+                  style={{
+                    padding: '12px',
+                    backgroundColor: '#374151',
+                    borderRadius: '6px',
+                    color: 'white',
+                    border: '1px solid #6366f1',
+                    outline: 'none',
+                    fontSize: '14px',
+                    marginBottom: 12
+                  }}
+                />
+
+                {/* Attendee dropdown */}
+                <label htmlFor="assignedAttendeeId" style={{ color: '#a5b4fc', fontWeight: 600 }}>Assign to Attendee</label>
+                <select
+                  id="assignedAttendeeId"
+                  name="assignedAttendeeId"
+                  value={taskForm.assignedAttendeeId || ''}
+                  onChange={e => setTaskForm({ ...taskForm, assignedAttendeeId: e.target.value })}
+                  style={{
+                    padding: '12px',
+                    backgroundColor: '#374151',
+                    borderRadius: '6px',
+                    color: 'white',
+                    border: '1px solid #6366f1',
+                    outline: 'none',
+                    fontSize: '14px',
+                    marginBottom: 16
+                  }}
+                >
+                  <option value="">Assign to Attendee (optional)</option>
+                  {eventAttendees.map(a => (
+                    <option key={a.id} value={a.id}>{a.name} ({a.email})</option>
+                  ))}
+                </select>
 
                 <div style={{ display: 'flex', gap: '12px', marginTop: '16px' }}>
                   <button
