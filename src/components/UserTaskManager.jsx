@@ -7,7 +7,7 @@ const UserTaskManager = ({ eventId }) => {
   const { user } = useAuth();
   const [tasks, setTasks] = useState([]);
   const [error, setError] = useState(null);
-  const API_URL = `http://localhost:8080/api/events/${eventId}/tasks`;
+  const API_URL = `https://eventbackend-kb4u.onrender.com/api/events/${eventId}/tasks`;
 
   useEffect(() => {
     fetchTasks();

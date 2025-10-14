@@ -28,8 +28,8 @@ export default function TaskManager({ eventId }) {
   const [form, setForm] = useState({ title: "", description: "", completed: false, deadline: "", assignedAttendeeId: "" });
   const [editingId, setEditingId] = useState(null);
   const [error, setError] = useState(null);
-  const API_URL = `http://localhost:8080/api/events/${eventId}/tasks`;
-  const ATTENDEE_URL = `http://localhost:8080/api/events/${eventId}/attendees`;
+  const API_URL = `https://eventbackend-kb4u.onrender.com/api/events/${eventId}/tasks`;
+  const ATTENDEE_URL = `https://eventbackend-kb4u.onrender.com/api/events/${eventId}/attendees`;
 
   useEffect(() => {
     // Fetch attendees first, then fetch tasks

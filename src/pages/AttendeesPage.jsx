@@ -42,7 +42,7 @@ export default function AttendeesPage() {
 
   const fetchEvents = async () => {
     try {
-      const data = await apiCall("http://localhost:8080/api/events");
+      const data = await apiCall("https://eventbackend-kb4u.onrender.com/api/events");
       setEvents(data);
       if (data.length > 0 && !selectedEventId) {
         setSelectedEventId(data[0].id);
@@ -55,7 +55,7 @@ export default function AttendeesPage() {
   const fetchAttendees = async () => {
     if (!selectedEventId) return;
     try {
-      const data = await apiCall(`http://localhost:8080/api/events/${selectedEventId}/attendees`);
+      const data = await apiCall(`https://eventbackend-kb4u.onrender.com/api/events/${selectedEventId}/attendees`);
       setAttendees(data);
     } catch (err) {
       setError(err.message);
@@ -83,8 +83,8 @@ export default function AttendeesPage() {
     }
 
     const url = editingId 
-      ? `http://localhost:8080/api/events/${selectedEventId}/attendees/${editingId}`
-      : `http://localhost:8080/api/events/${selectedEventId}/attendees`;
+      ? `https://eventbackend-kb4u.onrender.com/api/events/${selectedEventId}/attendees/${editingId}`
+      : `https://eventbackend-kb4u.onrender.com/api/events/${selectedEventId}/attendees`;
     const method = editingId ? "PUT" : "POST";
 
     try {
@@ -114,7 +114,7 @@ export default function AttendeesPage() {
     if (!window.confirm("Are you sure you want to remove this attendee?")) return;
 
     try {
-      await apiCall(`http://localhost:8080/api/events/${selectedEventId}/attendees/${id}`, { method: "DELETE" });
+      await apiCall(`https://eventbackend-kb4u.onrender.com/api/events/${selectedEventId}/attendees/${id}`, { method: "DELETE" });
       setAttendees(attendees.filter(a => a.id !== id));
     } catch (err) {
       setError(err.message);

@@ -5,7 +5,7 @@ import { apiCall } from '../lib/supabase';
 const UserAttendeeView = ({ eventId }) => {
   const [attendees, setAttendees] = useState([]);
   const [error, setError] = useState(null);
-  const API_URL = `http://localhost:8080/api/events/${eventId}/attendees`;
+  const API_URL = `https://eventbackend-kb4u.onrender.com/api/events/${eventId}/attendees`;
 
   useEffect(() => {
     fetchAttendees();

@@ -46,7 +46,7 @@ export const apiCall = async (url, options = {}) => {
     console.error('Network error:', networkError);
     // Check if it's a network connectivity issue
     if (networkError.name === 'TypeError' && networkError.message.includes('fetch')) {
-      throw new Error('Cannot connect to server. Please check if the backend is running on http://localhost:8080');
+      throw new Error('Cannot connect to server. Please check if the backend is running on https://eventbackend-kb4u.onrender.com');
     }
     throw networkError;
   }

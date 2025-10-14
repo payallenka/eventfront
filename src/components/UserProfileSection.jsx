@@ -13,7 +13,7 @@ const UserProfileSection = ({ user }) => {
     setProfileSuccess(false);
     
     try {
-      const response = await apiCall('http://localhost:8080/api/auth/profile', {
+      const response = await apiCall('https://eventbackend-kb4u.onrender.com/api/auth/profile', {
         method: 'PUT',
         body: JSON.stringify(profileForm)
       });

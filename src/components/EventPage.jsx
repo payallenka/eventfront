@@ -5,7 +5,7 @@ import EventCard from "./EventCard";
 import UserProfileSection from "./UserProfileSection";
 import { apiCall } from '../utils/api';
 
-const API_URL = "http://localhost:8080/api/events";
+const API_URL = "https://eventbackend-kb4u.onrender.com/api/events";
 
 export default function EventPage() {
   const { isAdmin: isAdminFunc, user } = useAuth();

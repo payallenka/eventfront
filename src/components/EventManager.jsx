@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import EventForm from "./EventForm";
 
-const API_URL = "http://localhost:8080/api/events";
+const API_URL = "https://eventbackend-kb4u.onrender.com/api/events";
 
 export default function EventManager() {
   const [events, setEvents] = useState([]);
