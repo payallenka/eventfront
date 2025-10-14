@@ -2,6 +2,16 @@
 
 ## Overview
 This is the React-based frontend for the Event Management Dashboard. It allows users to manage events, attendees, and tasks with a responsive and user-friendly interface.
+<iframe
+  width="600"
+  height="340"
+  src="https://www.youtube.com/embed/waxQhP0kyYg?autoplay=1&mute=1&loop=1&playlist=waxQhP0kyYg"
+  title="Event Management Dashboard Demo"
+  frameborder="0"
+  allow="autoplay; encrypted-media"
+  allowfullscreen>
+</iframe>
+
 
 ## Features
 - View, add, edit, and delete events
