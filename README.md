@@ -1,5 +1,5 @@
 # Event Management Dashboard – Frontend
-IMP: The frontend might take long to load the first time as the backend(deployed on render) goes in cool mode you might have to wait for 5 minutes for the first time :( then realtime updates:) && In case the register/login gives an error raise an issue to ping me (it's due to supabase free teir DB exhaustion, we just need to change the creds)
+IMP: The frontend might take long to load the first time as the backend(deployed on render) goes in cool mode you might have to wait for 5 minutes(max) for the first time :( then realtime updates:) && In case the register/login gives an error raise an issue to ping me (it's due to supabase free teir DB exhaustion, we just need to change the creds)
 
 ## Overview
 This is the React-based frontend for the Event Management Dashboard. It allows users to manage events, attendees, and tasks with a responsive and user-friendly interface.
