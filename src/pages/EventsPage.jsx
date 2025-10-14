@@ -71,7 +71,7 @@ export default function EventsPage({ onEventSelect }) {
   const [editingAttendee, setEditingAttendee] = useState(null);
   const [taskForm, setTaskForm] = useState({ title: '', description: '' });
   const [attendeeForm, setAttendeeForm] = useState({ name: '', email: '' });
-  const API_URL = "http://localhost:8080/api/events";
+  const API_URL = "https://eventbackend-kb4u.onrender.com/api/events";
 
   const handleWebSocketMessage = (message) => {
     try {
@@ -124,7 +124,7 @@ export default function EventsPage({ onEventSelect }) {
     error: wsError,
     sendMessage,
     isConnected
-  } = useWebSocket('ws://localhost:8080/ws/events', {
+  } = useWebSocket('wss://eventbackend-kb4u.onrender.com/ws/events', {
     onMessage: handleWebSocketMessage,
     onError: (error) => {
       console.error('WebSocket error:', error);
@@ -445,14 +445,14 @@ export default function EventsPage({ onEventSelect }) {
     setEventAttendees([]);
     
     Promise.all([
-      apiCall(`http://localhost:8080/api/events/${event.id}/tasks`).then(data => {
+      apiCall(`https://eventbackend-kb4u.onrender.com/api/events/${event.id}/tasks`).then(data => {
         setEventTasks(data);
       }).catch(err => {
         console.error('Error fetching tasks:', err);
         setEventTasks([]);
       }),
       
-      apiCall(`http://localhost:8080/api/events/${event.id}/attendees`).then(data => {
+      apiCall(`https://eventbackend-kb4u.onrender.com/api/events/${event.id}/attendees`).then(data => {
         setEventAttendees(data);
       }).catch(err => {
         console.error('Error fetching attendees:', err);
@@ -483,7 +483,7 @@ export default function EventsPage({ onEventSelect }) {
         completed: !currentStatus
       };
       
-      await apiCall(`http://localhost:8080/api/events/${selectedEvent.id}/tasks/${taskId}`, {
+      await apiCall(`https://eventbackend-kb4u.onrender.com/api/events/${selectedEvent.id}/tasks/${taskId}`, {
         method: 'PUT',
         body: JSON.stringify(taskUpdate)
       });
@@ -519,7 +519,7 @@ export default function EventsPage({ onEventSelect }) {
     try {
       if (editingTask) {
         // Update existing task
-        const updatedTask = await apiCall(`http://localhost:8080/api/events/${selectedEvent.id}/tasks/${editingTask.id}`, {
+        const updatedTask = await apiCall(`https://eventbackend-kb4u.onrender.com/api/events/${selectedEvent.id}/tasks/${editingTask.id}`, {
           method: 'PUT',
           body: JSON.stringify({
             title: taskForm.title,
@@ -536,7 +536,7 @@ export default function EventsPage({ onEventSelect }) {
         ));
       } else {
         // Create new task
-        const newTask = await apiCall(`http://localhost:8080/api/events/${selectedEvent.id}/tasks`, {
+        const newTask = await apiCall(`https://eventbackend-kb4u.onrender.com/api/events/${selectedEvent.id}/tasks`, {
           method: 'POST',
           body: JSON.stringify({
             title: taskForm.title,
@@ -564,7 +564,7 @@ export default function EventsPage({ onEventSelect }) {
     try {
       if (editingAttendee) {
         // Update existing attendee
-        const updatedAttendee = await apiCall(`http://localhost:8080/api/events/${selectedEvent.id}/attendees/${editingAttendee.id}`, {
+        const updatedAttendee = await apiCall(`https://eventbackend-kb4u.onrender.com/api/events/${selectedEvent.id}/attendees/${editingAttendee.id}`, {
           method: 'PUT',
           body: JSON.stringify({
             name: attendeeForm.name,
@@ -578,7 +578,7 @@ export default function EventsPage({ onEventSelect }) {
         ));
       } else {
         // Create new attendee
-        const newAttendee = await apiCall(`http://localhost:8080/api/events/${selectedEvent.id}/attendees`, {
+        const newAttendee = await apiCall(`https://eventbackend-kb4u.onrender.com/api/events/${selectedEvent.id}/attendees`, {
           method: 'POST',
           body: JSON.stringify({
             name: attendeeForm.name,
@@ -619,7 +619,7 @@ export default function EventsPage({ onEventSelect }) {
     
     if (window.confirm('Are you sure you want to delete this task?')) {
       try {
-        await apiCall(`http://localhost:8080/api/events/${selectedEvent.id}/tasks/${taskId}`, {
+        await apiCall(`https://eventbackend-kb4u.onrender.com/api/events/${selectedEvent.id}/tasks/${taskId}`, {
           method: 'DELETE'
         });
         
@@ -636,7 +636,7 @@ export default function EventsPage({ onEventSelect }) {
     
     if (window.confirm('Are you sure you want to remove this attendee?')) {
       try {
-        await apiCall(`http://localhost:8080/api/events/${selectedEvent.id}/attendees/${attendeeId}`, {
+        await apiCall(`https://eventbackend-kb4u.onrender.com/api/events/${selectedEvent.id}/attendees/${attendeeId}`, {
           method: 'DELETE'
         });
         
@@ -967,7 +967,7 @@ export default function EventsPage({ onEventSelect }) {
             onClick={() => {
               
               // Test basic connectivity
-              fetch('http://localhost:8080/api/events')
+              fetch('https://eventbackend-kb4u.onrender.com/api/events')
                 .then(response => {
                   return response.json();
                 })
