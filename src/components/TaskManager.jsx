@@ -81,7 +81,7 @@ export default function TaskManager({ eventId }) {
       description: form.description,
       completed: form.completed,
       deadline: form.deadline || null,
-      attendee_id: form.assignedAttendeeId || null
+      assignedAttendee: form.assignedAttendeeId ? { id: form.assignedAttendeeId } : null
     };
     console.log('Submitting payload:', payload);
     try {
